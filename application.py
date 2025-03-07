@@ -15,6 +15,7 @@ def start_radar(tb):
 
     # signal.signal(signal.SIGINT, sig_handler)
     # signal.signal(signal.SIGTERM, sig_handler)
+
     tb.start()
 
 def save_buffer(tb):

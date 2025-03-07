@@ -128,7 +128,7 @@ def compute_spectrogram_and_max_freq(signal, sampling_rate, nfft=1024, noverlap=
 
     return freqs, times, Sxx, max_freqs
 
-decimation = 100
+decimation = CONFIG.decimation
 
 # Sampling rate in Hz
 sampling_rate = 6e6 / decimation  # 4 million samples per second
@@ -144,7 +144,7 @@ f_prime = np.fromfile(open(CONFIG.file_name), dtype=np.complex64)
 f_high = highpass_chebyshev(f_prime, 750, 6e6)
 f = lowpass_filter_decimate(f_high, 1.5e6/decimation, 6e6, decimation, 6)
 
-freqs, times, Sxx, max_freqs = compute_spectrogram_and_max_freq(f, sampling_rate, 256, 128, -99)
+freqs, times, Sxx, max_freqs = compute_spectrogram_and_max_freq(f, sampling_rate, 1024, 512, -99)
 
 #plt.plot(max_freqs)
 
