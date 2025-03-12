@@ -104,8 +104,15 @@ def compute_spectrogram_and_max_freq(signal, sampling_rate, nfft=1024, noverlap=
         Sxx (ndarray): Spectrogram power.
         max_freqs (ndarray): Dominant frequency at each time step (zero if below threshold).
     """
+    signal = signal / np.max(signal)
+
+
     # Compute spectrogram
-    freqs, times, Sxx = spectrogram(signal, fs=sampling_rate, nperseg=nfft, noverlap=noverlap)
+    freqs, times, Sxx = spectrogram(signal, fs=sampling_rate, nperseg=nfft, noverlap=noverlap, return_onesided=False)
+
+    # Shift frequencies to center zero frequency
+    freqs = np.fft.fftshift(freqs)
+    Sxx = np.fft.fftshift(Sxx, axes=0)
 
     # Convert power to dB
     Sxx_dB = 10 * np.log10(Sxx + 1e-10)  # Add small value to avoid log(0)
@@ -114,12 +121,17 @@ def compute_spectrogram_and_max_freq(signal, sampling_rate, nfft=1024, noverlap=
     max_freq_indices = np.argmax(Sxx, axis=0)  # Find index of max power in each time step
     max_powers = Sxx_dB[max_freq_indices, np.arange(len(times))]  # Get corresponding power values
 
+    # find the max of max_powers
+    max_max_powers = max(max_powers)
+    power_threshold = max_max_powers - 5
+    print(f"power_threshold: {power_threshold}")
+
     # Apply threshold: If max power < threshold, set frequency to 0
     max_freqs = freqs[max_freq_indices] * (max_powers > power_threshold)
 
     # Plot the spectrogram
     # plt.figure(figsize=(10, 6))
-    # plt.pcolormesh(times, freqs, Sxx_dB, shading='auto', cmap='plasma')
+    # plt.pcolormesh(times, freqs, Sxx_dB, shading='auto', cmap='inferno')
     # plt.colorbar(label='Power (dB)')
     # plt.xlabel("Time (s)")
     # plt.ylabel("Frequency (Hz)")
@@ -128,60 +140,35 @@ def compute_spectrogram_and_max_freq(signal, sampling_rate, nfft=1024, noverlap=
 
     return freqs, times, Sxx, max_freqs
 
+
 decimation = CONFIG.decimation
 
 # Sampling rate in Hz
 sampling_rate = 6e6 / decimation  # 4 million samples per second
 
 f_prime = np.fromfile(open(CONFIG.file_name), dtype=np.complex64)
-#f_prime = np.fromfile(open("output.bin"), dtype=np.complex64)
-#f = np.fromfile(open("output.bin"), dtype=np.complex64)
-
-#f = np.fromfile(open("1MHz_TEST"), dtype=np.complex64)
-#f = np.fromfile(open("feb19.bin"), dtype=np.complex64)
-#f = np.fromfile(open("1MHz_TEST_VECTOR"), dtype=np.complex64)
-#f_prime = np.fromfile(open("mar4.bin"), dtype=np.complex64)
-f_high = highpass_chebyshev(f_prime, 750, 6e6)
+f_high = highpass_chebyshev(f_prime, 75000, 6e6)
 f = lowpass_filter_decimate(f_high, 1.5e6/decimation, 6e6, decimation, 6)
 
-freqs, times, Sxx, max_freqs = compute_spectrogram_and_max_freq(f, sampling_rate, 1024, 512, -99)
+freqs, times, Sxx, max_freqs = compute_spectrogram_and_max_freq(f, sampling_rate, 2048, 512, -55)
 
 #plt.plot(max_freqs)
-
 
 velocities = (max_freqs * c) / (2 * 85e9 + max_freqs)
 
 plt.figure(figsize=(10, 6))
 plt.plot(velocities)
+plt.tight_layout()
+plt.show()
 
-print(f"max velocity: {max(velocities)}")
-
-
-#print(1.5e6/decimation)
-
-#print(len(f))
-
-plt.figure(figsize=(10, 6))
-plt.plot(f)
-#plt.show()
-plt.savefig(CONFIG.output_file_prefix + "_time_domain.png")
+print(f"max velocity: {max(abs(velocities))}")
 
 # Perform FFT
 fft_result = np.fft.fft(f)
 fft_magnitude = np.abs(fft_result)
 
-
-
 # Calculate frequency bins
 frequencies = np.fft.fftfreq(len(f), 1 / sampling_rate)
-
-#plt.plot(f_deque)
-# plt.plot(f)
-# plt.show()
-
-# Plot the FFT magnitude, showing only the positive half of the frequency spectrum
-#plt.plot(frequencies[:len(f)], 20 * np.log10(fft_magnitude[:len(f)] / len(f)))
-#plt.plot(frequencies[:len(f)], 20 * np.log10(fft_magnitude[:len(f)] / len(f)))
 
 
 plt.figure(figsize=(10, 6))
@@ -194,58 +181,21 @@ plt.ylabel('Magnitude (dB)')
 plt.title('FFT of Discrete Signal')
 plt.grid()
 plt.tight_layout()
-#plt.show()
-plt.savefig(CONFIG.output_file_prefix + "_fft.png")
-
-
-# Find the peak frequency (ignoring negative frequencies)
-positive_frequencies = frequencies[:len(frequencies)//2]
-positive_magnitudes = fft_magnitude[:len(fft_magnitude)//2]
-peak_index = np.argmax(positive_magnitudes)  # Index of max magnitude
-peak_frequency = positive_frequencies[peak_index]  # Corresponding frequency
-
-#print("peak_frequency: %d\n", peak_frequency)
-
-
-# power_spectrum = (np.abs(fft_result) ** 2) / len(f)
-# half_len = len(f) // 2
-# frequencies = frequencies[:half_len]
-# power_spectrum = power_spectrum[:half_len]
-# plt.plot(frequencies, power_spectrum)
 # plt.show()
-
+# plt.savefig(CONFIG.output_file_prefix + "_fft.png")
 
 plt.figure(figsize=(10, 6))
 # Plot the spectrogram of lane 1 real data
 #plt.specgram(f, NFFT=3000, Fs=sampling_rate, noverlap=2500, cmap='plasma')
 #plt.specgram(f, NFFT=256, Fs=sampling_rate, noverlap=128, cmap='cividis')
-plt.specgram(f, NFFT=256, Fs=sampling_rate, noverlap=128, cmap='inferno')
+plt.specgram(f, NFFT=4096, Fs=sampling_rate, noverlap=512, cmap='inferno')
 plt.title('Spectrogram of RADAR Data')
 plt.xlabel('Time (seconds)')
 plt.ylabel('Frequency')
-#plt.ylim([0, 1000])
 plt.colorbar(label='Intensity (dB)')
 
-plt.savefig(CONFIG.output_file_prefix + "_spectrogram.png")
-plt.show()
 
-
-# # Compute FFT
-# N = len(f)
-# fft_result = np.fft.fft(f)
-# frequencies = np.fft.fftfreq(N, 1/sampling_rate)  # Frequency bins
-
-# # Compute PSD (power per Hz)
-# psd = (np.abs(fft_result) ** 2) / (sampling_rate * N)
-
-# # Keep only positive frequencies
-# positive_freqs = frequencies[:N//2]
-# positive_psd = psd[:N//2] * 2  # Multiply by 2 to account for negative frequencies
-
-# # Plot
-# plt.semilogy(positive_freqs, positive_psd)
-# plt.xlabel('Frequency (Hz)')
-# plt.ylabel('PSD (V²/Hz)')
-# plt.title('Power Spectral Density')
-# plt.grid()
+plt.tight_layout()
 # plt.show()
+# plt.savefig(CONFIG.output_file_prefix + "_spectrogram.png")
+

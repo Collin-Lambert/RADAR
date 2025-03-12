@@ -1,97 +1,156 @@
-45 test 1
+45_test_1
+- Chrono:
+- Radar: 291
+- % ERR from Chrono: N/A
 
 45_test_2
 - Chrono: 310
+- Radar: 315
+- % ERR from Chrono: 1.612
 
 45_test_3
 - Chrono: 324.9
+- Radar: 297
+- % ERR from Chrono: 8.333
 
 45_test_4
-:306.6
+- Chrono: 306.6
+- Radar: 299
+- % ERR from Chrono: 2.287
 
 45_test_5
-:299.7
+- Chrono: 299.7
+- Radar: 304
+- % ERR from Chrono: 1.672
 
 45_Test_6
-:321.5
+- Chrono: 321.5
+- Radar: 294
+- % ERR from Chrono: 8.411
 
 
 
 
 40_test_1
-- 354.7
+- Chrono: 354.7
+- Radar: 359
+- % ERR from Chrono: 1.412
 
 40_test_2
-- 357.5
+- Chrono: 357.5
+- Radar: 351
+- % ERR from Chrono: 1.68
 
 40_test_3
-- 361
+- Chrono: 361
+- Radar: 364
+- % ERR from Chrono: 0.554
 
 40_test_4
-- 363
+- Chrono: 363
+- Radar: 361
+- % ERR from Chrono: 0.5509
 
 40_test_5
-- 362.4
+- Chrono: 362.4
+- Radar: 361
+- % ERR from Chrono: 0.276
 
 
 
 
 762_test_1
-- 818
+- Chrono: 818
+- Radar: 824
+- % ERR from Chrono: 0.733
 
 762_test_2
-- 822.9
+- Chrono: 822.9
+- Radar: 831
+- % ERR from Chrono: 1.094
 
-762_test_#
-- 830.5
+762_test_3
+- Chrono: 830.5
+- Radar: 836
+- % ERR from Chrono: 0.722
 
 762_test_4
-- 836.6
+- Chrono: 836.6
+- Radar: 836
+- % ERR from Chrono: 0
 
 762_test_5
-- 829
+- Chrono: 829
+- Radar: 836
+- % ERR from Chrono: 0.844
 
 
 
 
 223_test_1
 - 
+- Radar: 1100
+- % ERR from Chrono: N/A
 
 223_test_2
-- 892
+- Chrono: 892
+- Radar: 896
+- % ERR from Chrono: 0.448
 
 223_test_3
-- 1094
+- Chrono: 1094
+- Radar: 1105
+- % ERR from Chrono: 1.005
 
 223_test_4
-- 1102.7
+- Chrono: 1102.7
+- Radar: 1108
+- % ERR from Chrono: 0.544
 
 223_test_5
-- 1089.9
+- Chrono: 1089.9
+- Radar: 1103
+- % ERR from Chrono: 1.285
 
 223_test_6
-- 1091.7
+- Chrono: 1091.7
+- Radar: 1105
+- % ERR from Chrono: 1.283
 
 
 
 17_test_1
 - 
+- Radar: 883
+- % ERR from Chrono: N/A
 
 17_test_2
-- 836.9
+- Chrono: 836.9
+- Radar: 844
+- % ERR from Chrono: 0.956
 
-
-
+17_test_3
+-
+- Radar: 847
+- % ERR from Chrono: N/A
 
 
 223_pellicle_test_1
-- 1115.5
+- Chrono: 1115.5
+- Radar: 1092
+- % ERR from Chrono: 2.062
 
 223_pellicle_small_test_1
-- 1081.7
+- Chrono: 1081.7
+- couldn't see
+- % ERR from Chrono: N/A
 
 223_pellicle_test_2
-- 1090.8
+- Chrono: 1090.8
+- bad data
+- % ERR from Chrono: N/A
 
 223_pellicle_test_3
-- 1083.2
+- Chrono: 1083.2
+- Radar: 1084
+- % ERR from Chrono: 0.0923

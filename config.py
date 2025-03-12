@@ -2,7 +2,7 @@
 class CONFIG():
 
     symetric_record_time = 2
-    output_file_prefix = "233_pellicle_test_3"
+    output_file_prefix = "gun_range_binaries/45_test_3"
     file_name = output_file_prefix + ".bin"
     rf_freq = 1000000000
     samp_rate = 6000000
