@@ -1,0 +1,9 @@
+Sample Rate: 6
+Sample Rate Units: MHz
+Intermediate Frequency: 1.5
+Intermediate Frequency Units: MHz
+Gain: 27
+Gain Units: dB
+FFT Size: 1024
+Recording Time: 4
+Recording Time Units: s

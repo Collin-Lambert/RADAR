@@ -86,7 +86,7 @@ def highpass_chebyshev(data, cutoff_freq, sampling_rate, filter_order=6, ripple_
     return filtered_data
 
 
-def compute_spectrogram_and_max_freq(signal, sampling_rate, nfft=1024, noverlap=512, power_threshold=-50):
+def compute_spectrogram_and_max_freq(signal, sampling_rate, nfft=1024, noverlap=512):
     """
     Computes the spectrogram and extracts the dominant frequency at each time step, 
     setting it to zero if below a power threshold.
@@ -141,61 +141,84 @@ def compute_spectrogram_and_max_freq(signal, sampling_rate, nfft=1024, noverlap=
     return freqs, times, Sxx, max_freqs
 
 
-decimation = CONFIG.decimation
+# do stuff
 
-# Sampling rate in Hz
-sampling_rate = 6e6 / decimation  # 4 million samples per second
+def process_data():
+    decimation = CONFIG.decimation
 
-f_prime = np.fromfile(open(CONFIG.file_name), dtype=np.complex64)
-f_high = highpass_chebyshev(f_prime, 75000, 6e6)
-f = lowpass_filter_decimate(f_high, 1.5e6/decimation, 6e6, decimation, 6)
+    # Sampling rate in Hz
+    sampling_rate = 6e6 / decimation  # 4 million samples per second
 
-freqs, times, Sxx, max_freqs = compute_spectrogram_and_max_freq(f, sampling_rate, 2048, 512, -55)
+    f_prime = np.fromfile(open(CONFIG.file_name), dtype=np.complex64)
+    f_high = highpass_chebyshev(f_prime, CONFIG.high_pass_cutoff, 6e6)
+    f = lowpass_filter_decimate(f_high, 1.5e6/decimation, 6e6, decimation, 6)
 
-#plt.plot(max_freqs)
+    freqs, times, Sxx, max_freqs = compute_spectrogram_and_max_freq(f, sampling_rate, CONFIG.fft_size, CONFIG.fft_overlap)
 
-velocities = (max_freqs * c) / (2 * 85e9 + max_freqs)
+    #plt.plot(max_freqs)
 
-plt.figure(figsize=(10, 6))
-plt.plot(velocities)
-plt.tight_layout()
-plt.show()
+    velocities = (max_freqs * c) / (2 * 85e9 + max_freqs)
 
-print(f"max velocity: {max(abs(velocities))}")
+    # plt.figure(figsize=(10, 6))
+    # plt.plot(velocities)
+    # plt.tight_layout()
+    # plt.show()
 
-# Perform FFT
-fft_result = np.fft.fft(f)
-fft_magnitude = np.abs(fft_result)
+    print(f"max velocity: {max(abs(velocities))}")
 
-# Calculate frequency bins
-frequencies = np.fft.fftfreq(len(f), 1 / sampling_rate)
+    # Perform FFT
+    fft_result = np.fft.fft(f)
+    fft_magnitude = np.abs(fft_result)
 
-
-plt.figure(figsize=(10, 6))
-# Plot the FFT in db
-plt.plot(frequencies[:len(f)], 20 * np.log10(fft_magnitude[:len(f)] / len(f)))
-
-#plt.plot(frequencies[:len(f)], fft_magnitude[:len(f)])
-plt.xlabel('Frequency (Hz)')
-plt.ylabel('Magnitude (dB)')
-plt.title('FFT of Discrete Signal')
-plt.grid()
-plt.tight_layout()
-# plt.show()
-# plt.savefig(CONFIG.output_file_prefix + "_fft.png")
-
-plt.figure(figsize=(10, 6))
-# Plot the spectrogram of lane 1 real data
-#plt.specgram(f, NFFT=3000, Fs=sampling_rate, noverlap=2500, cmap='plasma')
-#plt.specgram(f, NFFT=256, Fs=sampling_rate, noverlap=128, cmap='cividis')
-plt.specgram(f, NFFT=4096, Fs=sampling_rate, noverlap=512, cmap='inferno')
-plt.title('Spectrogram of RADAR Data')
-plt.xlabel('Time (seconds)')
-plt.ylabel('Frequency')
-plt.colorbar(label='Intensity (dB)')
+    # Calculate frequency bins
+    frequencies = np.fft.fftfreq(len(f), 1 / sampling_rate)
 
 
-plt.tight_layout()
-# plt.show()
-# plt.savefig(CONFIG.output_file_prefix + "_spectrogram.png")
+    # plt.figure(figsize=(10, 6))
+    # # Plot the FFT in db
+    # plt.plot(frequencies[:len(f)], 20 * np.log10(fft_magnitude[:len(f)] / len(f)))
+
+    # #plt.plot(frequencies[:len(f)], fft_magnitude[:len(f)])
+    # plt.xlabel('Frequency (Hz)')
+    # plt.ylabel('Magnitude (dB)')
+    # plt.title('FFT of Discrete Signal')
+    # plt.grid()
+    # plt.tight_layout()
+    # plt.show()
+    # plt.savefig(CONFIG.output_file_prefix + "_fft.png")
+
+    plt.figure(figsize=(10, 6))
+    # Plot the spectrogram of lane 1 real data
+    #plt.specgram(f, NFFT=3000, Fs=sampling_rate, noverlap=2500, cmap='plasma')
+    #plt.specgram(f, NFFT=256, Fs=sampling_rate, noverlap=128, cmap='cividis')
+    plt.specgram(f, NFFT=CONFIG.fft_size, Fs=sampling_rate, noverlap=CONFIG.fft_overlap, cmap='inferno')
+    plt.title('Spectrogram of RADAR Data')
+    plt.xlabel('Time (seconds)')
+    plt.ylabel('Frequency')
+    plt.colorbar(label='Intensity (dB)')
+
+    plt.tight_layout()
+    plt.show()
+
+
+    # plt.tight_layout()
+    # #plt.show()
+    # # plt.savefig(CONFIG.output_file_prefix + "_spectrogram.png")
+
+    # fig, ax = plt.subplots(figsize=(5, 2.5))
+    # ax.specgram(f, NFFT=CONFIG.fft_size, Fs=sampling_rate, noverlap=CONFIG.fft_overlap, cmap='inferno')
+    # ax.set_axis_off()  # Remove axis
+    # fig.subplots_adjust(left=0, right=1, top=1, bottom=0)  # Remove white border
+    # fig.colorbar(ax.images[0], ax=ax, label='Intensity (dB)')
+
+
+    # fig.tight_layout()
+    # #plt.show()
+    # return fig
+    return max(abs(velocities)) # return max velocity
+
+
+
+if __name__ == "__main__":
+    process_data()
 
