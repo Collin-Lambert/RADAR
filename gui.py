@@ -40,10 +40,16 @@ def validate_integer(P):
         return False
 
 def show_keyboard(event=None):
-    subprocess.Popen(["onboard"])  # Launch the OSK
+    try:
+        subprocess.Popen(["onboard"])  # Launch the OSK
+    except FileNotFoundError:
+        messagebox.showerror("Error", "Onboard virtual keyboard is not installed. Please install it using 'sudo apt install onboard' on Linux.")
 
 def hide_keyboard(event=None):
-    subprocess.Popen(["pkill", "onboard"])  # Close OSK
+    try:
+        subprocess.Popen(["pkill", "onboard"])  # Close OSK
+    except FileNotFoundError:
+        messagebox.showerror("Error", "Onboard virtual keyboard is not installed.")
 
 def arm():
     # run apply_changes to make sure the settings are applied
@@ -212,11 +218,6 @@ window.geometry("1000x800")
 pad = 3
 
 
-entry = tk.Entry(window)
-# entry.pack(pady=20)
-entry.bind("<FocusIn>", show_keyboard)  # Open keyboard when clicked
-entry.bind("<FocusOut>", hide_keyboard)
-
 tk.Label(window, text="Settings", font=("Arial", 24, "bold")).grid(row=0, column=1, pady=pad)
 
 validate_int_cmd = window.register(validate_integer)
@@ -226,6 +227,8 @@ validate_int_cmd = window.register(validate_integer)
 tk.Label(window, text="Sample Rate: ").grid(row=1, column=0, pady=pad, sticky='e')
 sample_rate = tk.Entry(window)
 sample_rate.insert(0, "6")
+sample_rate.bind("<FocusIn>", show_keyboard)  # Open keyboard when clicked
+sample_rate.bind("<FocusOut>", hide_keyboard)
 sample_rate.grid(row=1, column=1, pady=pad)
 ################### BEGIN DROPDOWN ###################
 # Create a StringVar to hold the selected value
@@ -411,7 +414,7 @@ style.map("Custom.TButtonArm.TButton", background=[("active", "red"), ("!active"
 
 # insert a run button that will do nothing for now
 arm_button = ttk.Button(window, text="arm", command=arm, style="Custom.TButtonArm.TButton")
-arm_button.grid(row=9, column=4, pady=pad, padx=20, ipadx=40, ipady=50)  # ipadx increases internal horizontal spacing, ipady increases internal vertical spacing
+arm_button.grid(row=9, column=4, pady=pad, padx=20)  # ipadx increases internal horizontal spacing, ipady increases internal vertical spacing
 arm_button.config(width=10)  # Set a specific width for the button
 
 # disarm button
@@ -421,7 +424,7 @@ style_disarm.map("Custom.TButtonDisarm.TButton", background=[("active", "red"), 
 
 # insert a run button that will do nothing for now
 disarm_button = ttk.Button(window, text="disarm", command=disarm, style="Custom.TButtonDisarm.TButton", state="disabled")
-disarm_button.grid(row=9, column=4, pady=pad, padx=20, ipadx=40, ipady=50)  # ipadx increases internal horizontal spacing, ipady increases internal vertical spacing
+disarm_button.grid(row=9, column=4, pady=pad, padx=20)  # ipadx increases internal horizontal spacing, ipady increases internal vertical spacing
 disarm_button.config(width=10)  # Set a specific width for the button
 disarm_button.grid_remove()
 
