@@ -228,7 +228,7 @@ tk.Label(window, text="Sample Rate: ").grid(row=1, column=0, pady=pad, sticky='e
 sample_rate = tk.Entry(window)
 sample_rate.insert(0, "6")
 sample_rate.bind("<FocusIn>", show_keyboard)  # Open keyboard when clicked
-sample_rate.bind("<FocusOut>", hide_keyboard)
+# sample_rate.bind("<FocusOut>", hide_keyboard)
 sample_rate.grid(row=1, column=1, pady=pad)
 ################### BEGIN DROPDOWN ###################
 # Create a StringVar to hold the selected value
