@@ -41,13 +41,19 @@ def validate_integer(P):
 
 def show_keyboard(event=None):
     try:
-        subprocess.Popen(["onboard"])  # Launch the OSK
+        subprocess.Popen(["dbus-send", "--type=method_call", 
+                      "--dest=org.gnome.Shell", 
+                      "/org/gnome/Shell", "org.gnome.Shell.Eval",
+                      "string:'Main.oskManager.showKeyboard()'"])
     except FileNotFoundError:
         messagebox.showerror("Error", "Onboard virtual keyboard is not installed. Please install it using 'sudo apt install onboard' on Linux.")
 
 def hide_keyboard(event=None):
     try:
-        subprocess.Popen(["pkill", "onboard"])  # Close OSK
+        subprocess.Popen(["dbus-send", "--type=method_call", 
+                      "--dest=org.gnome.Shell", 
+                      "/org/gnome/Shell", "org.gnome.Shell.Eval",
+                      "string:'Main.oskManager.hideKeyboard()'"])
     except FileNotFoundError:
         messagebox.showerror("Error", "Onboard virtual keyboard is not installed.")
 
