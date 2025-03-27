@@ -9,6 +9,7 @@ import threading
 import process_data as pd
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import serial.tools.list_ports
+from datetime import datetime
 
 RADAR = RADAR_TOP()
 
@@ -46,12 +47,24 @@ def arm():
     # run the radar
         threading.Thread(target=RADAR.arm).start()
         messagebox.showinfo("RADAR armed", "Radar armed")
-        arm_button.config(text="armed", state="disabled")
+        arm_button.config(state="disabled")
+        arm_button.grid_remove()
         manual_trigger_button.config(state="normal")
+        disarm_button.config(state="normal")
+        disarm_button.grid()
         # messagebox.showinfo("Run", "Measuring...\nMeasuring...\nMeasuring...")
         # messagebox.showinfo("Run", "All Done!")
     else:
         messagebox.showerror("Error", "Settings have not been applied")
+
+def disarm():
+    RADAR.disarm()
+    arm_button.config(state="normal")
+    arm_button.grid()
+    manual_trigger_button.config(state="disabled")
+    disarm_button.config(state="disabled")
+    disarm_button.grid_remove()
+    messagebox.showinfo("RADAR disarmed", "Radar disarmed")
 
 def apply_changes():
     settings = {}
@@ -144,6 +157,8 @@ def apply_changes():
     CONFIG.fft_size = int(option_fft.get())
     CONFIG.fft_overlap = int(option_fft_overlap.get())
     CONFIG.symetric_record_time = int(recording_time.get()) / 2
+    
+    
 
     messagebox.showinfo("Settings Applied", "Settings have been applied")
 
@@ -152,18 +167,30 @@ def apply_changes():
     print(f"sdr_gain: {CONFIG.sdr_gain}")
     print(f"fft_size: {CONFIG.fft_size}")
     print(f"symetric_record_time: {CONFIG.symetric_record_time}")
+    print(f"decimation: {CONFIG.decimation}")
+    print(f"high_pass_cutoff: {CONFIG.high_pass_cutoff}")
+    print(f"fft_overlap: {CONFIG.fft_overlap}")
+    print(f"file_name: {CONFIG.file_name}")
     return True
 
 def start_buffer():
-    manual_trigger_button.config(state="disabled")
+    # manual_trigger_button.config(state="disabled")
+
+    if (timestamp_var.get()):
+        current_time = datetime.now().strftime("%m-%d-%Y_%H:%M:%S")
+        CONFIG.file_name = f"{file_name.get()}_{current_time}.bin"
+    else:
+        CONFIG.file_name = f"{file_name.get()}.bin"
+
+
     RADAR.begin_save_buffer = True
     messagebox.showinfo("Manual Trigger", "Buffer Started")
 
     while(RADAR.currently_saving_buffer):
         pass
 
-    arm_button.config(text="arm", state="normal")
-    max_velocity = pd.process_data()
+    # arm_button.config(text="arm", state="normal")
+    max_velocity = pd.process_data(spectrogram_var.get())
     update_max_velocity(f"{max_velocity:.1f}")
 #
 #
@@ -310,6 +337,20 @@ dropdown.grid(row=8, column=1, pady=20, sticky='e')
 ################### END DROPDOWN #####################
 
 
+# add a box for the user to input the decimation value
+tk.Label(window, text="File Name: ").grid(row=3, column=4, pady=10, sticky='e')
+file_name = tk.Entry(window)
+file_name.insert(0, "default")
+file_name.grid(row=3, column=5, pady=10)
+################### BEGIN DROPDOWN ###################
+# Create a StringVar to hold the selected value
+option_file_name = StringVar()
+option_file_name.set(".bin")  # Set the default value
+
+unit_label = tk.Label(window, textvariable=option_file_name, relief="groove", width=5)
+unit_label.grid(row=3, column=5, pady=20, sticky='e')
+################### END DROPDOWN #####################
+#tk.Label(window, text="(Default: 2)").grid(row=6, column=2, pady=10, sticky='w')
 
 
 
@@ -319,7 +360,7 @@ apply_button.grid(row=9, column=1, pady=10)
 
 
 # Now we will create a column against the right side of the gui that will have output check boxes for spectrogram, velocity, and whether or not to save the data
-tk.Label(window, text="Output Options", font=("Arial", 24, "bold")).grid(row=0, column=5, pady=10)
+tk.Label(window, text="Output", font=("Arial", 24, "bold")).grid(row=0, column=5, pady=10)
 
 
 
@@ -331,36 +372,56 @@ spectrogram.grid(row=1, column=5, pady=10)
 spectrogram.select()
 
 
-# add a check box for the user to select whether or not to display the velocity
-velocity_var = tk.BooleanVar()
-velocity = tk.Checkbutton(window, text="Velocity", variable=velocity_var)
-velocity.grid(row=2, column=5, pady=10)
-velocity.select()
+# add a check box for the user to select whether or not to append the date and time to the file name
+timestamp_var = tk.BooleanVar()
+timestamp = tk.Checkbutton(window, text="Append Timestamp to File Name", variable=timestamp_var)
+timestamp.grid(row=2, column=5, pady=10)
+timestamp.select()
 
 
-# add a check box for the user to select whether or not to save the data
-save_data_var = tk.BooleanVar()
-save_data = tk.Checkbutton(window, text="Save Data", variable=save_data_var)
-save_data.grid(row=3, column=5, pady=10)
-save_data.select()
+# # add a check box for the user to select whether or not to save the data
+# save_data_var = tk.BooleanVar()
+# save_data = tk.Checkbutton(window, text="Save Data", variable=save_data_var)
+# save_data.grid(row=3, column=5, pady=10)
+# save_data.select()
 
 # add a button that will function as a manual trigger to start the buffer
 manual_trigger_button = tk.Button(window, text="Manual Trigger", command=start_buffer, state="disabled")
-manual_trigger_button.grid(row=4, column=5, pady=10)
+manual_trigger_button.grid(row=10, column=5, pady=10)
 
+# arm button
 style = ttk.Style()
-style.configure("Custom.TButton", background="black", foreground="red", font=("Arial", 14, "bold"))
+style.configure("Custom.TButtonArm.TButton", font=("Arial", 14, "bold"))
+style.map("Custom.TButtonArm.TButton", background=[("active", "red"), ("!active", "black")], foreground=[("active", "white"), ("!active", "red")])
 
 # insert a run button that will do nothing for now
-arm_button = ttk.Button(window, text="arm", command=arm, style="Custom.TButton")
-arm_button.grid(row=12, column=4, pady=20, padx=20, ipadx=40, ipady=50)  # ipadx increases internal horizontal spacing, ipady increases internal vertical spacing
+arm_button = ttk.Button(window, text="arm", command=arm, style="Custom.TButtonArm.TButton")
+arm_button.grid(row=10, column=4, pady=20, padx=20, ipadx=40, ipady=50)  # ipadx increases internal horizontal spacing, ipady increases internal vertical spacing
+arm_button.config(width=10)  # Set a specific width for the button
+
+# disarm button
+style_disarm = ttk.Style()
+style_disarm.configure("Custom.TButtonDisarm.TButton", font=("Arial", 14, "bold"))
+style_disarm.map("Custom.TButtonDisarm.TButton", background=[("active", "red"), ("!active", "black")], foreground=[("active", "white"), ("!active", "red")])
+
+# insert a run button that will do nothing for now
+disarm_button = ttk.Button(window, text="disarm", command=disarm, style="Custom.TButtonDisarm.TButton", state="disabled")
+disarm_button.grid(row=10, column=4, pady=20, padx=20, ipadx=40, ipady=50)  # ipadx increases internal horizontal spacing, ipady increases internal vertical spacing
+disarm_button.config(width=10)  # Set a specific width for the button
+disarm_button.grid_remove()
 
 # add a box to display the maximum velocity
-tk.Label(window, text="Max Velocity: ").grid(row=5, column=4, pady=10, sticky='e')
+tk.Label(window, text="Max Velocity: ").grid(row=4, column=4, pady=10, sticky='e')
 max_velocity_var = tk.StringVar()
 max_velocity_var.set("0")
 max_velocity_label = tk.Label(window, textvariable=max_velocity_var, relief="groove", width=20)
-max_velocity_label.grid(row=5, column=5, pady=10, sticky='w')
+max_velocity_label.grid(row=4, column=5, pady=10, sticky='w')
+
+option_vel = StringVar()
+option_vel.set("m/s")  # Set the default value
+# Create an OptionMenu
+unit_label = tk.Label(window, textvariable=option_vel, relief="groove", width=5)
+unit_label.grid(row=4, column=5, pady=20, sticky='e')
 
 def update_max_velocity(value):
     max_velocity_var.set(value)

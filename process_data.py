@@ -143,7 +143,7 @@ def compute_spectrogram_and_max_freq(signal, sampling_rate, nfft=1024, noverlap=
 
 # do stuff
 
-def process_data():
+def process_data(display_spectrogram=True):
     decimation = CONFIG.decimation
 
     # Sampling rate in Hz
@@ -198,7 +198,9 @@ def process_data():
     plt.colorbar(label='Intensity (dB)')
 
     plt.tight_layout()
-    plt.show()
+
+    if (display_spectrogram):
+        plt.show()
 
 
     # plt.tight_layout()
