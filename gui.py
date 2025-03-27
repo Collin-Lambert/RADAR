@@ -202,16 +202,18 @@ window.title("PotaDAR")
 # adjust the window size
 window.geometry("1000x800")
 
-tk.Label(window, text="Settings", font=("Arial", 24, "bold")).grid(row=0, column=1, pady=10)
+pad = 3
+
+tk.Label(window, text="Settings", font=("Arial", 24, "bold")).grid(row=0, column=1, pady=pad)
 
 validate_int_cmd = window.register(validate_integer)
 
 
 # add a box for the user to input the sample rate and set a default value of 4MHz
-tk.Label(window, text="Sample Rate: ").grid(row=1, column=0, pady=10, sticky='e')
+tk.Label(window, text="Sample Rate: ").grid(row=1, column=0, pady=pad, sticky='e')
 sample_rate = tk.Entry(window)
 sample_rate.insert(0, "6")
-sample_rate.grid(row=1, column=1, pady=10)
+sample_rate.grid(row=1, column=1, pady=pad)
 ################### BEGIN DROPDOWN ###################
 # Create a StringVar to hold the selected value
 option_freq = StringVar()
@@ -219,17 +221,17 @@ option_freq.set("MHz")  # Set the default value
 # Create an OptionMenu
 options = ["MHz"]
 unit_label = tk.Label(window, textvariable=option_freq, relief="groove", width=5)
-unit_label.grid(row=1, column=1, pady=20, sticky='e')
+unit_label.grid(row=1, column=1, pady=pad, sticky='e')
 ################### END DROPDOWN #####################
 # add on the right side of the box that the default is 4MHz, make it right beside the box
-tk.Label(window, text="(Default: 6MHz)", justify="left").grid(row=1, column=2, pady=10, sticky='w')
+tk.Label(window, text="(Default: 6MHz)", justify="left").grid(row=1, column=2, pady=pad, sticky='w')
 
 
 # add a field for the user to input the TX frequency
-tk.Label(window, text="SDR Frequency: ").grid(row=2, column=0, pady=10, sticky='e')
+tk.Label(window, text="SDR Frequency: ").grid(row=2, column=0, pady=pad, sticky='e')
 int_freq = tk.Entry(window)
 int_freq.insert(0, "1.5")
-int_freq.grid(row=2, column=1, pady=10)
+int_freq.grid(row=2, column=1, pady=pad)
 ################### BEGIN DROPDOWN ###################
 # Create a StringVar to hold the selected value
 option_int_freq = StringVar()
@@ -237,31 +239,31 @@ option_int_freq.set("MHz")  # Set the default value
 # Create an OptionMenu
 options = ["MHz"]
 unit_label = tk.Label(window, textvariable=option_int_freq, relief="groove", width=5)
-unit_label.grid(row=2, column=1, pady=20, sticky='e')
+unit_label.grid(row=2, column=1, pady=pad, sticky='e')
 ################### END DROPDOWN #####################
-tk.Label(window, text="(Default: 1.5MHz)").grid(row=2, column=2, pady=10, sticky='w')
+tk.Label(window, text="(Default: 1.5MHz)").grid(row=2, column=2, pady=pad, sticky='w')
 
 
 # add a box for the user to input the gain
-tk.Label(window, text="Gain: ").grid(row=3, column=0, pady=10, sticky='e')
+tk.Label(window, text="Gain: ").grid(row=3, column=0, pady=pad, sticky='e')
 gain = tk.Entry(window)
 gain.insert(0, "27")
-gain.grid(row=3, column=1, pady=10)
+gain.grid(row=3, column=1, pady=pad)
 ################### BEGIN DROPDOWN ###################
 # Create a Label to show the units
 option_gain = StringVar()
 option_gain.set("dB")  # Set the default value
 # Create a Label to mimic the appearance of an OptionMenu
 unit_label = tk.Label(window, textvariable=option_gain, relief="groove", width=5)
-unit_label.grid(row=3, column=1, pady=20, sticky='e')
+unit_label.grid(row=3, column=1, pady=pad, sticky='e')
 ################### END DROPDOWN #####################
-tk.Label(window, text="(Default: 27dB)").grid(row=3, column=2, pady=10, sticky='w')
+tk.Label(window, text="(Default: 27dB)").grid(row=3, column=2, pady=pad, sticky='w')
 
 # add a box for the user to input the recording time
-tk.Label(window, text="Recording Time: ").grid(row=4, column=0, pady=10, sticky='e')
+tk.Label(window, text="Recording Time: ").grid(row=4, column=0, pady=pad, sticky='e')
 recording_time = tk.Entry(window)
 recording_time.insert(0, "4")
-recording_time.grid(row=4, column=1, pady=10)
+recording_time.grid(row=4, column=1, pady=pad)
 ################### BEGIN DROPDOWN ###################
 # Create a StringVar to hold the selected value
 option_time = StringVar()
@@ -269,47 +271,47 @@ option_time.set("s")  # Set the default value
 # Create an OptionMenu
 # options = ["s", "ms"]
 unit_label = tk.Label(window, textvariable=option_time, relief="groove", width=5)
-unit_label.grid(row=4, column=1, pady=20, sticky='e')
+unit_label.grid(row=4, column=1, pady=pad, sticky='e')
 ################### END DROPDOWN #####################
-tk.Label(window, text="(Default: 4s)").grid(row=4, column=2, pady=10, sticky='w')
+tk.Label(window, text="(Default: 4s)").grid(row=4, column=2, pady=pad, sticky='w')
 
 # add a box for the user to input the high pass cutoff frequency
-tk.Label(window, text="High-Pass Cutoff: ").grid(row=5, column=0, pady=10, sticky='e')
+tk.Label(window, text="High-Pass Cutoff: ").grid(row=5, column=0, pady=pad, sticky='e')
 high_pass_cutoff = tk.Entry(window)
 high_pass_cutoff.insert(0, "75000")
-high_pass_cutoff.grid(row=5, column=1, pady=10)
+high_pass_cutoff.grid(row=5, column=1, pady=pad)
 ################### BEGIN DROPDOWN ###################
 # Create a StringVar to hold the selected value
 option_high_pass = StringVar()
 option_high_pass.set("Hz")  # Set the default value
 
 unit_label = tk.Label(window, textvariable=option_high_pass, relief="groove", width=5)
-unit_label.grid(row=5, column=1, pady=20, sticky='e')
+unit_label.grid(row=5, column=1, pady=pad, sticky='e')
 ################### END DROPDOWN #####################
-tk.Label(window, text="(Default: 75000)").grid(row=5, column=2, pady=10, sticky='w')
+tk.Label(window, text="(Default: 75000)").grid(row=5, column=2, pady=pad, sticky='w')
 
 # add a box for the user to input the decimation value
-tk.Label(window, text="Decimation: ").grid(row=6, column=0, pady=10, sticky='e')
+tk.Label(window, text="Decimation: ").grid(row=6, column=0, pady=pad, sticky='e')
 decimation = tk.Entry(window)
 decimation.insert(0, "2")
-decimation.grid(row=6, column=1, pady=10)
+decimation.grid(row=6, column=1, pady=pad)
 ################### BEGIN DROPDOWN ###################
 # Create a StringVar to hold the selected value
 option_decimation = StringVar()
 option_decimation.set("int")  # Set the default value
 
 unit_label = tk.Label(window, textvariable=option_decimation, relief="groove", width=5)
-unit_label.grid(row=6, column=1, pady=20, sticky='e')
+unit_label.grid(row=6, column=1, pady=pad, sticky='e')
 ################### END DROPDOWN #####################
-tk.Label(window, text="(Default: 2)").grid(row=6, column=2, pady=10, sticky='w')
+tk.Label(window, text="(Default: 2)").grid(row=6, column=2, pady=pad, sticky='w')
 
 
 # add a box for the user to input the FFT size
-tk.Label(window, text="FFT Size: ").grid(row=7, column=0, pady=10, sticky='e')
+tk.Label(window, text="FFT Size: ").grid(row=7, column=0, pady=pad, sticky='e')
 # fft_size = tk.Entry(window)
 # fft_size.insert(0, "1024")
 # fft_size.grid(row=4, column=1, pady=10)
-tk.Label(window, text="(Default: 1024)").grid(row=7, column=2, pady=10, sticky='w')
+tk.Label(window, text="(Default: 1024)").grid(row=7, column=2, pady=pad, sticky='w')
 ################### BEGIN DROPDOWN ###################
 # Create a StringVar to hold the selected value
 option_fft = StringVar()
@@ -317,15 +319,15 @@ option_fft.set("1024")  # Set the default value
 # Create an OptionMenu
 options = ["64", "128", "256", "512", "1024", "2048", "4096", "8192"]
 dropdown = OptionMenu(window, option_fft, *options)
-dropdown.grid(row=7, column=1, pady=20, sticky='e')
+dropdown.grid(row=7, column=1, pady=pad, sticky='e')
 ################### END DROPDOWN #####################
 
 # add a box for the user to input the FFT overlap
-tk.Label(window, text="FFT Overlap: ").grid(row=8, column=0, pady=10, sticky='e')
+tk.Label(window, text="FFT Overlap: ").grid(row=8, column=0, pady=pad, sticky='e')
 # fft_size = tk.Entry(window)
 # fft_size.insert(0, "1024")
 # fft_size.grid(row=4, column=1, pady=10)
-tk.Label(window, text="(Default: 1024)").grid(row=8, column=2, pady=10, sticky='w')
+tk.Label(window, text="(Default: 1024)").grid(row=8, column=2, pady=pad, sticky='w')
 ################### BEGIN DROPDOWN ###################
 # Create a StringVar to hold the selected value
 option_fft_overlap = StringVar()
@@ -333,22 +335,22 @@ option_fft_overlap.set("512")  # Set the default value
 # Create an OptionMenu
 options = ["64", "128", "256", "512", "1024", "2048", "4096", "8192"]
 dropdown = OptionMenu(window, option_fft_overlap, *options)
-dropdown.grid(row=8, column=1, pady=20, sticky='e')
+dropdown.grid(row=8, column=1, pady=pad, sticky='e')
 ################### END DROPDOWN #####################
 
 
 # add a box for the user to input the decimation value
-tk.Label(window, text="File Name: ").grid(row=3, column=4, pady=10, sticky='e')
+tk.Label(window, text="File Name: ").grid(row=3, column=4, pady=pad, sticky='e')
 file_name = tk.Entry(window)
 file_name.insert(0, "default")
-file_name.grid(row=3, column=5, pady=10)
+file_name.grid(row=3, column=5, pady=pad)
 ################### BEGIN DROPDOWN ###################
 # Create a StringVar to hold the selected value
 option_file_name = StringVar()
 option_file_name.set(".bin")  # Set the default value
 
 unit_label = tk.Label(window, textvariable=option_file_name, relief="groove", width=5)
-unit_label.grid(row=3, column=5, pady=20, sticky='e')
+unit_label.grid(row=3, column=5, pady=pad, sticky='e')
 ################### END DROPDOWN #####################
 #tk.Label(window, text="(Default: 2)").grid(row=6, column=2, pady=10, sticky='w')
 
@@ -356,11 +358,11 @@ unit_label.grid(row=3, column=5, pady=20, sticky='e')
 
 # add a button that will apply the changes
 apply_button = tk.Button(window, text="Apply Changes", command=apply_changes)
-apply_button.grid(row=9, column=1, pady=10)
+apply_button.grid(row=9, column=1, pady=pad)
 
 
 # Now we will create a column against the right side of the gui that will have output check boxes for spectrogram, velocity, and whether or not to save the data
-tk.Label(window, text="Output", font=("Arial", 24, "bold")).grid(row=0, column=5, pady=10)
+tk.Label(window, text="Output", font=("Arial", 24, "bold")).grid(row=0, column=5, pady=pad)
 
 
 
@@ -368,14 +370,14 @@ tk.Label(window, text="Output", font=("Arial", 24, "bold")).grid(row=0, column=5
 # add a check box for the user to select whether or not to display the spectrogram
 spectrogram_var = tk.BooleanVar()
 spectrogram = tk.Checkbutton(window, text="Spectrogram", variable=spectrogram_var)
-spectrogram.grid(row=1, column=5, pady=10)
+spectrogram.grid(row=1, column=5, pady=pad)
 spectrogram.select()
 
 
 # add a check box for the user to select whether or not to append the date and time to the file name
 timestamp_var = tk.BooleanVar()
 timestamp = tk.Checkbutton(window, text="Append Timestamp to File Name", variable=timestamp_var)
-timestamp.grid(row=2, column=5, pady=10)
+timestamp.grid(row=2, column=5, pady=pad)
 timestamp.select()
 
 
@@ -387,7 +389,7 @@ timestamp.select()
 
 # add a button that will function as a manual trigger to start the buffer
 manual_trigger_button = tk.Button(window, text="Manual Trigger", command=start_buffer, state="disabled")
-manual_trigger_button.grid(row=10, column=5, pady=10)
+manual_trigger_button.grid(row=9, column=5, pady=pad)
 
 # arm button
 style = ttk.Style()
@@ -396,7 +398,7 @@ style.map("Custom.TButtonArm.TButton", background=[("active", "red"), ("!active"
 
 # insert a run button that will do nothing for now
 arm_button = ttk.Button(window, text="arm", command=arm, style="Custom.TButtonArm.TButton")
-arm_button.grid(row=10, column=4, pady=20, padx=20, ipadx=40, ipady=50)  # ipadx increases internal horizontal spacing, ipady increases internal vertical spacing
+arm_button.grid(row=9, column=4, pady=pad, padx=20, ipadx=40, ipady=50)  # ipadx increases internal horizontal spacing, ipady increases internal vertical spacing
 arm_button.config(width=10)  # Set a specific width for the button
 
 # disarm button
@@ -406,22 +408,22 @@ style_disarm.map("Custom.TButtonDisarm.TButton", background=[("active", "red"), 
 
 # insert a run button that will do nothing for now
 disarm_button = ttk.Button(window, text="disarm", command=disarm, style="Custom.TButtonDisarm.TButton", state="disabled")
-disarm_button.grid(row=10, column=4, pady=20, padx=20, ipadx=40, ipady=50)  # ipadx increases internal horizontal spacing, ipady increases internal vertical spacing
+disarm_button.grid(row=9, column=4, pady=pad, padx=20, ipadx=40, ipady=50)  # ipadx increases internal horizontal spacing, ipady increases internal vertical spacing
 disarm_button.config(width=10)  # Set a specific width for the button
 disarm_button.grid_remove()
 
 # add a box to display the maximum velocity
-tk.Label(window, text="Max Velocity: ").grid(row=4, column=4, pady=10, sticky='e')
+tk.Label(window, text="Max Velocity: ").grid(row=4, column=4, pady=pad, sticky='e')
 max_velocity_var = tk.StringVar()
 max_velocity_var.set("0")
 max_velocity_label = tk.Label(window, textvariable=max_velocity_var, relief="groove", width=20)
-max_velocity_label.grid(row=4, column=5, pady=10, sticky='w')
+max_velocity_label.grid(row=4, column=5, pady=pad, sticky='w')
 
 option_vel = StringVar()
 option_vel.set("m/s")  # Set the default value
 # Create an OptionMenu
 unit_label = tk.Label(window, textvariable=option_vel, relief="groove", width=5)
-unit_label.grid(row=4, column=5, pady=20, sticky='e')
+unit_label.grid(row=4, column=5, pady=pad, sticky='e')
 
 def update_max_velocity(value):
     max_velocity_var.set(value)
