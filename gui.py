@@ -10,6 +10,7 @@ import process_data as pd
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import serial.tools.list_ports
 from datetime import datetime
+import subprocess
 
 RADAR = RADAR_TOP()
 
@@ -38,6 +39,11 @@ def validate_integer(P):
         messagebox.showerror("Invalid Input", "Please enter a valid integer.")
         return False
 
+def show_keyboard(event=None):
+    subprocess.Popen(["onboard"])  # Launch the OSK
+
+def hide_keyboard(event=None):
+    subprocess.Popen(["pkill", "onboard"])  # Close OSK
 
 def arm():
     # run apply_changes to make sure the settings are applied
@@ -188,7 +194,8 @@ def start_buffer():
 
     while(RADAR.currently_saving_buffer):
         pass
-
+    
+    RADAR.begin_save_buffer = False
     # arm_button.config(text="arm", state="normal")
     max_velocity = pd.process_data(spectrogram_var.get())
     update_max_velocity(f"{max_velocity:.1f}")
@@ -203,6 +210,12 @@ window.title("PotaDAR")
 window.geometry("1000x800")
 
 pad = 3
+
+
+entry = tk.Entry(window)
+# entry.pack(pady=20)
+entry.bind("<FocusIn>", show_keyboard)  # Open keyboard when clicked
+entry.bind("<FocusOut>", hide_keyboard)
 
 tk.Label(window, text="Settings", font=("Arial", 24, "bold")).grid(row=0, column=1, pady=pad)
 
