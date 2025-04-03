@@ -129,12 +129,14 @@ def compute_spectrogram_and_max_freq(signal, sampling_rate, nfft=1024, noverlap=
     # Apply threshold: If max power < threshold, set frequency to 0
     max_freqs = freqs[max_freq_indices] * (max_powers > power_threshold)
 
-    # Plot the spectrogram
+    freqs = (freqs * c) / (2 * 85e9 + freqs)
+
+    # plot the spectrogram
     # plt.figure(figsize=(10, 6))
     # plt.pcolormesh(times, freqs, Sxx_dB, shading='auto', cmap='inferno')
     # plt.colorbar(label='Power (dB)')
     # plt.xlabel("Time (s)")
-    # plt.ylabel("Frequency (Hz)")
+    # plt.ylabel("Velocity (m/s)")
     # plt.title("Spectrogram")
     # plt.show()
 
@@ -155,46 +157,21 @@ def process_data(display_spectrogram=True):
 
     freqs, times, Sxx, max_freqs = compute_spectrogram_and_max_freq(f, sampling_rate, CONFIG.fft_size, CONFIG.fft_overlap)
 
-    #plt.plot(max_freqs)
-
     velocities = (max_freqs * c) / (2 * 85e9 + max_freqs)
 
-    # plt.figure(figsize=(10, 6))
     # plt.plot(velocities)
-    # plt.tight_layout()
     # plt.show()
 
     print(f"max velocity: {max(abs(velocities))}")
 
-    # Perform FFT
-    fft_result = np.fft.fft(f)
-    fft_magnitude = np.abs(fft_result)
-
-    # Calculate frequency bins
-    frequencies = np.fft.fftfreq(len(f), 1 / sampling_rate)
-
-
-    # plt.figure(figsize=(10, 6))
-    # # Plot the FFT in db
-    # plt.plot(frequencies[:len(f)], 20 * np.log10(fft_magnitude[:len(f)] / len(f)))
-
-    # #plt.plot(frequencies[:len(f)], fft_magnitude[:len(f)])
-    # plt.xlabel('Frequency (Hz)')
-    # plt.ylabel('Magnitude (dB)')
-    # plt.title('FFT of Discrete Signal')
-    # plt.grid()
-    # plt.tight_layout()
-    # plt.show()
-    # plt.savefig(CONFIG.output_file_prefix + "_fft.png")
 
     plt.figure(figsize=(10, 6))
-    # Plot the spectrogram of lane 1 real data
-    #plt.specgram(f, NFFT=3000, Fs=sampling_rate, noverlap=2500, cmap='plasma')
-    #plt.specgram(f, NFFT=256, Fs=sampling_rate, noverlap=128, cmap='cividis')
+
     plt.specgram(f, NFFT=CONFIG.fft_size, Fs=sampling_rate, noverlap=CONFIG.fft_overlap, cmap='inferno')
     plt.title('Spectrogram of RADAR Data')
     plt.xlabel('Time (seconds)')
     plt.ylabel('Frequency')
+
     plt.colorbar(label='Intensity (dB)')
 
     plt.tight_layout()
@@ -202,21 +179,6 @@ def process_data(display_spectrogram=True):
     if (display_spectrogram):
         plt.show()
 
-
-    # plt.tight_layout()
-    # #plt.show()
-    # # plt.savefig(CONFIG.output_file_prefix + "_spectrogram.png")
-
-    # fig, ax = plt.subplots(figsize=(5, 2.5))
-    # ax.specgram(f, NFFT=CONFIG.fft_size, Fs=sampling_rate, noverlap=CONFIG.fft_overlap, cmap='inferno')
-    # ax.set_axis_off()  # Remove axis
-    # fig.subplots_adjust(left=0, right=1, top=1, bottom=0)  # Remove white border
-    # fig.colorbar(ax.images[0], ax=ax, label='Intensity (dB)')
-
-
-    # fig.tight_layout()
-    # #plt.show()
-    # return fig
     return max(abs(velocities)) # return max velocity
 
 

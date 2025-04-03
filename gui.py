@@ -18,18 +18,68 @@ max_velocity = 0
 external_trigger = False
 device = None
 
+stop_event = threading.Event()  # Used to stop the serial listener thread
+
+def serial_listener():
+    """ Continuously listens to the serial port and calls start_buffer() when 0xFF is received. """
+    if device is None:
+        print("No device found to listen to.")
+        return
+
+    try:
+        with serial.Serial(device, 9600, timeout=0.01) as ser:
+            print(f"Listening to serial port: {device}")
+            while not stop_event.is_set():  # Keep running until stopped
+                data = ser.read(1)  # Read one byte
+                if data:
+                    print(f"Received data: {data}")  # Debugging output
+                if data == b'\xFF':
+                    print("Received data packet: 0xFF")
+                    if (disarm_button['state'] == 'normal'):
+                        window.after(0, start_buffer)
+                        print("Scheduled start_buffer()")
+                    else:
+                        print("Radar is not armed, ignoring external trigger")
+    except serial.SerialException as e:
+        print(f"Serial error: {e}")
+
+def start_serial_listener():
+    """ Starts the serial listener in a background thread if not already running. """
+    global serial_thread
+    if "serial_thread" in globals() and serial_thread.is_alive():
+        print("Serial listener is already running.")
+        return  # Prevent multiple threads from running
+
+    stop_event.clear()  # Reset stop flag
+    serial_thread = threading.Thread(target=serial_listener, daemon=True)
+    serial_thread.start()
+    print("Started serial listener thread.")
+
+def stop_serial_listener():
+    """ Stops the serial listener thread. """
+    stop_event.set()
+    print("Stopping serial listener thread.")
+
 ports = serial.tools.list_ports.comports()
 for port in ports:
 
-    if (port.description.__contains__("Nano")):
+    if (port.description.__contains__("USB2.0-Ser")):
         # Check if the port is a USB serial device
         print(f"Found: {port.device} - {port.description}")
         external_trigger = True
         device = port.device
+        start_serial_listener()
         break
     else:
         print(f"Not Found: {port.device} - {port.description}")
         external_trigger = False
+
+
+
+
+def handle_data_packet():
+    print("Handling data packet...")
+    # Add your logic here for handling the data packet
 
 
 def validate_integer(P):
@@ -39,23 +89,20 @@ def validate_integer(P):
         messagebox.showerror("Invalid Input", "Please enter a valid integer.")
         return False
 
-def show_keyboard(event=None):
-    try:
-        subprocess.Popen(["dbus-send", "--type=method_call", 
-                      "--dest=org.gnome.Shell", 
-                      "/org/gnome/Shell", "org.gnome.Shell.Eval",
-                      "string:'Main.oskManager.showKeyboard()'"])
-    except FileNotFoundError:
-        messagebox.showerror("Error", "Onboard virtual keyboard is not installed. Please install it using 'sudo apt install onboard' on Linux.")
+# def show_keyboard(event=None):
+#     try:
+#         subprocess.Popen(["dbus-send", "--type=method_call", 
+#                       "--dest=org.gnome.Shell", 
+#                       "/org/gnome/Shell", "org.gnome.Shell.Eval",
+#                       "string:'Main.oskManager.showKeyboard()'"])
+#     except FileNotFoundError:
+#         messagebox.showerror("Error", "Onboard virtual keyboard is not installed. Please install it using 'sudo apt install onboard' on Linux.")
 
-def hide_keyboard(event=None):
-    try:
-        subprocess.Popen(["dbus-send", "--type=method_call", 
-                      "--dest=org.gnome.Shell", 
-                      "/org/gnome/Shell", "org.gnome.Shell.Eval",
-                      "string:'Main.oskManager.hideKeyboard()'"])
-    except FileNotFoundError:
-        messagebox.showerror("Error", "Onboard virtual keyboard is not installed.")
+# def hide_keyboard(event=None):
+#     try:
+#         subprocess.Popen(["gsettings", "set", "org.gnome.desktop.a11y.applications", "screen-keyboard-enabled", "false"])
+#     except FileNotFoundError:
+#         messagebox.showerror("Error", "Onboard virtual keyboard is not installed.")
 
 def arm():
     # run apply_changes to make sure the settings are applied
@@ -202,15 +249,18 @@ def start_buffer():
 
 
     RADAR.begin_save_buffer = True
-    messagebox.showinfo("Manual Trigger", "Buffer Started")
+    RADAR.currently_saving_buffer = True
 
     while(RADAR.currently_saving_buffer):
         pass
-    
     RADAR.begin_save_buffer = False
+    messagebox.showinfo("Manual Trigger", "Buffer Saved")
+    
+    
     # arm_button.config(text="arm", state="normal")
     max_velocity = pd.process_data(spectrogram_var.get())
     update_max_velocity(f"{max_velocity:.1f}")
+
 #
 #
 #
@@ -233,7 +283,7 @@ validate_int_cmd = window.register(validate_integer)
 tk.Label(window, text="Sample Rate: ").grid(row=1, column=0, pady=pad, sticky='e')
 sample_rate = tk.Entry(window)
 sample_rate.insert(0, "6")
-sample_rate.bind("<FocusIn>", show_keyboard)  # Open keyboard when clicked
+# sample_rate.bind("<FocusIn>", show_keyboard)  # Open keyboard when clicked
 # sample_rate.bind("<FocusOut>", hide_keyboard)
 sample_rate.grid(row=1, column=1, pady=pad)
 ################### BEGIN DROPDOWN ###################
@@ -349,7 +399,7 @@ tk.Label(window, text="FFT Overlap: ").grid(row=8, column=0, pady=pad, sticky='e
 # fft_size = tk.Entry(window)
 # fft_size.insert(0, "1024")
 # fft_size.grid(row=4, column=1, pady=10)
-tk.Label(window, text="(Default: 1024)").grid(row=8, column=2, pady=pad, sticky='w')
+tk.Label(window, text="(Default: 512)").grid(row=8, column=2, pady=pad, sticky='w')
 ################### BEGIN DROPDOWN ###################
 # Create a StringVar to hold the selected value
 option_fft_overlap = StringVar()
