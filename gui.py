@@ -75,34 +75,12 @@ for port in ports:
         external_trigger = False
 
 
-
-
-def handle_data_packet():
-    print("Handling data packet...")
-    # Add your logic here for handling the data packet
-
-
 def validate_integer(P):
     if P.isdigit() or P == "":
         return True
     else:
         messagebox.showerror("Invalid Input", "Please enter a valid integer.")
         return False
-
-# def show_keyboard(event=None):
-#     try:
-#         subprocess.Popen(["dbus-send", "--type=method_call", 
-#                       "--dest=org.gnome.Shell", 
-#                       "/org/gnome/Shell", "org.gnome.Shell.Eval",
-#                       "string:'Main.oskManager.showKeyboard()'"])
-#     except FileNotFoundError:
-#         messagebox.showerror("Error", "Onboard virtual keyboard is not installed. Please install it using 'sudo apt install onboard' on Linux.")
-
-# def hide_keyboard(event=None):
-#     try:
-#         subprocess.Popen(["gsettings", "set", "org.gnome.desktop.a11y.applications", "screen-keyboard-enabled", "false"])
-#     except FileNotFoundError:
-#         messagebox.showerror("Error", "Onboard virtual keyboard is not installed.")
 
 def arm():
     # run apply_changes to make sure the settings are applied
@@ -119,8 +97,10 @@ def arm():
         disarm_button.grid()
         # messagebox.showinfo("Run", "Measuring...\nMeasuring...\nMeasuring...")
         # messagebox.showinfo("Run", "All Done!")
+        return True
     else:
         messagebox.showerror("Error", "Settings have not been applied")
+        return False
 
 def disarm():
     RADAR.disarm()
@@ -130,6 +110,7 @@ def disarm():
     disarm_button.config(state="disabled")
     disarm_button.grid_remove()
     messagebox.showinfo("RADAR disarmed", "Radar disarmed")
+    return True
 
 def apply_changes():
     settings = {}
@@ -222,6 +203,7 @@ def apply_changes():
     CONFIG.fft_size = int(option_fft.get())
     CONFIG.fft_overlap = int(option_fft_overlap.get())
     CONFIG.symetric_record_time = int(recording_time.get()) / 2
+    CONFIG.high_pass_cutoff = int(high_pass_cutoff.get())
     
     
 
@@ -239,7 +221,7 @@ def apply_changes():
     return True
 
 def start_buffer():
-    # manual_trigger_button.config(state="disabled")
+    manual_trigger_button.config(state="disabled")
 
     if (timestamp_var.get()):
         current_time = datetime.now().strftime("%m-%d-%Y_%H:%M:%S")
@@ -251,15 +233,20 @@ def start_buffer():
     RADAR.begin_save_buffer = True
     RADAR.currently_saving_buffer = True
 
+    print(f"Starting buffer save to {CONFIG.file_name}")
     while(RADAR.currently_saving_buffer):
         pass
     RADAR.begin_save_buffer = False
     messagebox.showinfo("Manual Trigger", "Buffer Saved")
     
     
-    # arm_button.config(text="arm", state="normal")
+    arm_button.config(text="arm", state="normal")
     max_velocity = pd.process_data(spectrogram_var.get())
     update_max_velocity(f"{max_velocity:.1f}")
+
+    disarm()
+
+    return True
 
 #
 #
@@ -350,7 +337,7 @@ tk.Label(window, text="(Default: 4s)").grid(row=4, column=2, pady=pad, sticky='w
 # add a box for the user to input the high pass cutoff frequency
 tk.Label(window, text="High-Pass Cutoff: ").grid(row=5, column=0, pady=pad, sticky='e')
 high_pass_cutoff = tk.Entry(window)
-high_pass_cutoff.insert(0, "75000")
+high_pass_cutoff.insert(0, "1000")
 high_pass_cutoff.grid(row=5, column=1, pady=pad)
 ################### BEGIN DROPDOWN ###################
 # Create a StringVar to hold the selected value
@@ -365,7 +352,7 @@ tk.Label(window, text="(Default: 75000)").grid(row=5, column=2, pady=pad, sticky
 # add a box for the user to input the decimation value
 tk.Label(window, text="Decimation: ").grid(row=6, column=0, pady=pad, sticky='e')
 decimation = tk.Entry(window)
-decimation.insert(0, "2")
+decimation.insert(0, "80")
 decimation.grid(row=6, column=1, pady=pad)
 ################### BEGIN DROPDOWN ###################
 # Create a StringVar to hold the selected value
@@ -441,7 +428,7 @@ tk.Label(window, text="Output", font=("Arial", 24, "bold")).grid(row=0, column=5
 
 # add a check box for the user to select whether or not to display the spectrogram
 spectrogram_var = tk.BooleanVar()
-spectrogram = tk.Checkbutton(window, text="Spectrogram", variable=spectrogram_var)
+spectrogram = tk.Checkbutton(window, text="Show Spectrogram", variable=spectrogram_var)
 spectrogram.grid(row=1, column=5, pady=pad)
 spectrogram.select()
 
@@ -450,7 +437,7 @@ spectrogram.select()
 timestamp_var = tk.BooleanVar()
 timestamp = tk.Checkbutton(window, text="Append Timestamp to File Name", variable=timestamp_var)
 timestamp.grid(row=2, column=5, pady=pad)
-timestamp.select()
+#timestamp.select()
 
 
 # # add a check box for the user to select whether or not to save the data

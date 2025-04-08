@@ -179,6 +179,7 @@ def process_data(display_spectrogram=True):
     if (display_spectrogram):
         plt.show()
 
+    print(f"finished processing data from {CONFIG.file_name}")
     return max(abs(velocities)) # return max velocity
 
 

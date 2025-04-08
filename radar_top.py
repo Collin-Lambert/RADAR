@@ -27,6 +27,7 @@ class RADAR_TOP:
         # signal.signal(signal.SIGTERM, sig_handler)
 
         self.tb.start()
+        return True
 
     def save_buffer(self):
 
@@ -36,10 +37,11 @@ class RADAR_TOP:
 
         self.currently_saving_buffer = True
         time.sleep(CONFIG.symetric_record_time)  # Wait for 1 second before saving
+        print(f"creating buffer from the queue block...")
         buffer = self.tb.queue_block.buffer
         filename = CONFIG.file_name
 
-
+        print(f"creating copy of buffer")
         buffer_copy = np.array(list(buffer))  # Create a copy for writing
         try:
             with open(filename, "wb") as f:  # Open in write binary mode ("wb") to overwrite
@@ -49,12 +51,15 @@ class RADAR_TOP:
             print(f"Error writing to file: {e}")
 
         # self.disarm()
+        print("stop buffer save")
         self.currently_saving_buffer = False
+        return True
 
     def disarm(self):
         print("Disarming radar...")
         self.tb.stop()
         self.tb.wait()
+        return True
 
     def arm(self):
         # GPIO setup (if applicable)
@@ -76,4 +81,5 @@ class RADAR_TOP:
 
         save_thread.join()  # Wait for save thread to finish before exiting
         print("Exiting program...")
+        return True
 
