@@ -119,7 +119,7 @@ Remain at least 25.4cm (10 inches) from the antennae while the device is powered
             <td>Decrease FFT bin size</td>
         </tr>
         <tr>
-            <td>Input is overfilled and clips, output is saturated (40_test_2_spectrogram.png)</td>
+            <td>Input is overfilled and clips, output is saturated</td>
             <td>Gain is too high</td>
             <td>Decrease gain</td>
         </tr>
