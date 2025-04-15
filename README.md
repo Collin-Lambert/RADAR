@@ -1,14 +1,3 @@
-# Setup
-
-To install on a linux machine, change the permissions of both "install.sh" and "run.sh" by running `sudo chmod +x install.sh`
-Next, install by running `sudo ./install.sh`
-
-# Run
-
-To run, run `sudo ./run.sh`
-
-
-
 # MMWave Radar User Manual
 
 #### SFT-004, Rev A
@@ -19,6 +8,8 @@ To run, run `sudo ./run.sh`
 <ul>
 
 <li>Overview
+<li>Installation
+<li>Running the Radar</li>
 <li>Quick Start Guide
 <li>Software Installation
 <li>Hardware Specifications
@@ -31,11 +22,18 @@ To run, run `sudo ./run.sh`
 
 The millimeter wave radar system is designed to measure the velocity of projectiles of at least 7.62mm diameter travelling between 30m/s and 2000m/s within 5% resolution at a distance of at least half a meter. 
 
+## Installation
+
+To install on a linux machine, change the permissions of both "install.sh" and "run.sh" by running `sudo chmod +x install.sh`
+Next, install by running `sudo ./install.sh`
+
+## Running the Radar
+
+In a terminal window, enter `./run.sh`. This will run the GUI file.
+
 ## Quick Start Guide
 
-To turn on the radar, follow the steps below.
-
-1. Install the radar software using the bash script or by following the detailed guide under the software installation section.
+<b>To turn on the radar:</b>
 
 1. Place the radar with the antenna pointing toward or away from what you want to measure.
 
@@ -47,17 +45,17 @@ To turn on the radar, follow the steps below.
 
 5. If using a hardware trigger, connect a BNC cable to the port on the outside of the radar. 
 
-7. Flip the black Radar Switch to On. The LED on the radar will turn Blue for a short time, then turn green. When the LED is green, the radar is on and radiating. See the Safety section for guidelines on radar emmisions. 
+6. Flip the black Radar Switch to On. The LED on the radar will turn Blue for a short time, then turn green. When the LED is green, the radar is on and radiating. See the Safety section for guidelines on radar emmisions. 
 
-To use the radar, follow the steps below.
+<b>To use the radar:</b>
 
-6. Open the radar software, a GUI will open up with prefilled value for radar parameters. 
+1. Open the radar software, a GUI will open up with prefilled value for radar parameters. 
 
-8. In the Software, when ready to use the radar, press the "ARM" button. This starts the radar software. 
+2. In the Software, when ready to use the radar, press the "ARM" button. This starts the radar software. 
 
-9. To trigger the radar, press the "Manual Trigger" button or assert an external trigger. This will continue to run the radar for a bit, and then save the buffer to a file. This ensures that data is captured both before and after the event. If the "Show Spectrogram" checkbox is checked, a spectrogram of the recorded data will be shown. The highest speed will be shown in the "Max Velocity" textbox. 
+3. To trigger the radar, press the "Manual Trigger" button or assert an external trigger. This will continue to run the radar for a bit, and then save the buffer to a file. This ensures that data is captured both before and after the event. If the "Show Spectrogram" checkbox is checked, a spectrogram of the recorded data will be shown. The highest speed will be shown in the "Max Velocity" textbox. 
 
-To turn off the radar, follow the steps below. 
+<b>To turn off the radar, follow the steps below.</b>
 
 1. Turn off the radar emission by flipping the black radar switch. The LED should turn red. 
 
