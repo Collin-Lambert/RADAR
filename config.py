@@ -9,8 +9,8 @@ class CONFIG():
     transmit_freq = 1500000
     sdr_gain = 27
     #decimation=2
-    decimation = 2
+    decimation = 80
     fft_size = 1024
     fft_overlap = 512
     #high_pass_cutoff = 75000
-    high_pass_cutoff = 75000
+    high_pass_cutoff = 750

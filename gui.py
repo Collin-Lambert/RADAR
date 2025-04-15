@@ -35,7 +35,7 @@ def serial_listener():
                     print(f"Received data: {data}")  # Debugging output
                 if data == b'\xFF':
                     print("Received data packet: 0xFF")
-                    if (disarm_button['state'] == 'normal'):
+                    if (str(disarm_button.cget('state')) == 'normal'):
                         window.after(0, start_buffer)
                         print("Scheduled start_buffer()")
                     else:
@@ -204,6 +204,7 @@ def apply_changes():
     CONFIG.fft_overlap = int(option_fft_overlap.get())
     CONFIG.symetric_record_time = int(recording_time.get()) / 2
     CONFIG.high_pass_cutoff = int(high_pass_cutoff.get())
+    CONFIG.decimation = int(decimation.get())
     
     
 
