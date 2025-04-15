@@ -43,7 +43,7 @@ To turn on the radar, follow the steps below.
 
 3. Flip the red power switch on the back, the switch should light up, and the radar LED should turn on red. 
 
-4. Connect the radar to the computer using a USB 3.0 cable. <b>DO NOT</b> use a USB 2.0 cable or the drivers for the radar may get corrupted. If this is the case, refer to the troubleshooting guide for instructions on how to reinstall the drivers.
+4. Connect the radar to the computer using a USB 3.0 cable. <b><i>DO NOT</i></b> use a USB 2.0 cable or the drivers for the radar may get corrupted.
 
 5. If using a hardware trigger, connect a BNC cable to the port on the outside of the radar. 
 
