@@ -337,7 +337,7 @@ tk.Label(window, text="(Default: 4s)").grid(row=4, column=2, pady=pad, sticky='w
 # add a box for the user to input the high pass cutoff frequency
 tk.Label(window, text="High-Pass Cutoff: ").grid(row=5, column=0, pady=pad, sticky='e')
 high_pass_cutoff = tk.Entry(window)
-high_pass_cutoff.insert(0, "1000")
+high_pass_cutoff.insert(0, "75000")
 high_pass_cutoff.grid(row=5, column=1, pady=pad)
 ################### BEGIN DROPDOWN ###################
 # Create a StringVar to hold the selected value
@@ -352,7 +352,7 @@ tk.Label(window, text="(Default: 75000)").grid(row=5, column=2, pady=pad, sticky
 # add a box for the user to input the decimation value
 tk.Label(window, text="Decimation: ").grid(row=6, column=0, pady=pad, sticky='e')
 decimation = tk.Entry(window)
-decimation.insert(0, "80")
+decimation.insert(0, "2")
 decimation.grid(row=6, column=1, pady=pad)
 ################### BEGIN DROPDOWN ###################
 # Create a StringVar to hold the selected value
