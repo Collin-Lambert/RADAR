@@ -25,5 +25,3 @@ source venv/bin/activate
 pip3 install tk
 pip3 install matplotlib
 pip3 install pyserial
-
-
